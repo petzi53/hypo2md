@@ -1,12 +1,9 @@
-library(httr2)
-library(jsonlite)
-library(tidyverse)
-library(glue)
-library(clipr)
+
 
 api_url = "https://hypothes.is/api/"
 api_docs1 = "https://h.readthedocs.io/en/latest/api-reference/v1/"
 api_docs2 = "https://h.readthedocs.io/en/latest/api-reference/v2/"
+api_token_scrambled = "mHKOBMLVOVQZ65eSsEtNmTVzDToWZsLIeEI8lZrVQb5CKldCeWyRqlBxZGjA4uCtWF3enJRKJgsIyJyvILDYnQ"
 
 # example: fetch a public annotation
 # id of the public annotation: tDwC-N4oEe2l9PMJ6ie-Tw
@@ -61,7 +58,8 @@ hypo_search <- function(
     # see: https://httr2.r-lib.org/articles/httr2.html
     httr2::request(httr2::url_build(url))  |>
         httr2::req_headers(Accept = "application/vnd.hypothesis.v1+json") |>
-        httr2::req_auth_bearer_token(token) |>
+        httr2::req_auth_bearer_token(secret_decrypt
+                         (api_token_scrambled, "HYPO2MD_PACKAGE_KEY")) |>
         httr2::req_perform() |>
 
         # transform API response to tibble
