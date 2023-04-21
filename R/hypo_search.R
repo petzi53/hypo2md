@@ -11,7 +11,6 @@ api_token_scrambled = "mHKOBMLVOVQZ65eSsEtNmTVzDToWZsLIeEI8lZrVQb5CKldCeWyRqlBxZ
 # req <- request(h_api) |> req_url_path_append("annotations") |> req_url_path_append("tDwC-N4oEe2l9PMJ6ie-Tw")
 
 
-api_url = "https://api.hypothes.is/api"
 my_url <- "https://r4ds.hadley.nz/workflow-help.html"
 
 
@@ -21,7 +20,7 @@ hypo_search <- function(
         search_after = NULL,
         offset       = NULL,
         order        = NULL,
-        uri          = NULL,
+        url          = NULL,
         uri_parts    = NULL,
         wildcard_uri = NULL,
         user         = NULL,
@@ -33,15 +32,15 @@ hypo_search <- function(
         references   = NULL,
         text         = NULL
 ) {
-    url <- httr2::url_parse(api_url)
-    url$path <- "/api/search"
-    url$query <-  list(
+    uri <- httr2::url_parse(api_url)
+    uri$path <- "/api/search"
+    uri$query <-  list(
         limit        = limit,
         sort         = sort,
         search_after = search_after,
         offset       = offset,
         order        = order,
-        uri          = uri,
+        uri          = url,
         uri_parts    = uri_parts,
         wildcard_uri = wildcard_uri,
         user         = user,
@@ -56,9 +55,9 @@ hypo_search <- function(
 
     # build request and perform request
     # see: https://httr2.r-lib.org/articles/httr2.html
-    httr2::request(httr2::url_build(url))  |>
+    httr2::request(httr2::url_build(uri))  |>
         httr2::req_headers(Accept = "application/vnd.hypothesis.v1+json") |>
-        httr2::req_auth_bearer_token(secret_decrypt
+        httr2::req_auth_bearer_token(httr2::secret_decrypt
                          (api_token_scrambled, "HYPO2MD_PACKAGE_KEY")) |>
         httr2::req_perform() |>
 
